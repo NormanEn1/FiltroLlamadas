@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.rounded.Apps
+import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Copyright
 import androidx.compose.material.icons.rounded.PhoneAndroid
@@ -343,12 +344,39 @@ private fun AboutSection() {
         AboutRow(Icons.Rounded.PhoneAndroid, "Requisitos", "Android 10 o superior · desvío condicional del operador (**67*)")
         AboutRow(Icons.Rounded.Code, "Construida con", "Kotlin · Jetpack Compose · Material 3 · Room")
         AboutRow(Icons.Rounded.Apps, "Paquete", ctx.packageName)
+        AboutRow(
+            Icons.Rounded.Code,
+            "Código fuente",
+            "github.com/NormanEn1/FiltroLlamadas",
+            onClick = { openUrl(ctx, REPO_URL) },
+        )
+        AboutRow(
+            Icons.Rounded.BugReport,
+            "Reportar un problema",
+            "Abre un issue en GitHub (indica operador y modelo)",
+            onClick = { openUrl(ctx, "$REPO_URL/issues") },
+        )
+    }
+}
+
+private const val REPO_URL = "https://github.com/NormanEn1/FiltroLlamadas"
+
+/** Abre el navegador del teléfono; no requiere permiso de red en esta app. */
+private fun openUrl(ctx: android.content.Context, url: String) {
+    runCatching {
+        ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 }
 
 @Composable
-private fun AboutRow(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, subtitle: String) {
+private fun AboutRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: (() -> Unit)? = null,
+) {
     ListItem(
+        modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
         leadingContent = { Icon(icon, contentDescription = null) },
         headlineContent = { Text(title) },
         supportingContent = { Text(subtitle) },

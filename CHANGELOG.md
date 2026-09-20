@@ -21,4 +21,4 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Interfaz Material 3 con tema claro/oscuro y colores dinámicos.
 - Sin permiso `INTERNET` (eliminado explícitamente del manifiesto).
 - Sección **Acerca de** en Ajustes: Filtro · Neom · versión 1.0.0 (2026), compilación, qué hace, privacidad,
-  licencia MIT, requisitos, tecnologías y paquete.
+  licencia MIT, requisitos, tecnologías, paquete y enlaces al repositorio y a los issues.
