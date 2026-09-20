@@ -1,0 +1,23 @@
+# Android Studio / IntelliJ
+*.iml
+/.idea/
+.DS_Store
+
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+/build/
+/app/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+
+# Configuración local (ruta del SDK) — nunca se sube
+/local.properties
+
+# Binarios y firmas — nunca se suben
+*.apk
+*.aab
+*.jks
+*.keystore
+keystore.properties
