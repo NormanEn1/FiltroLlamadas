@@ -43,12 +43,14 @@ object PhoneNumbers {
     }
 
     fun pretty(raw: String?): String {
-        val k = key(raw)
-        if (k.isEmpty()) return "Número oculto"
-        return if (k.length == 10 && k.startsWith("3")) {
-            "${k.substring(0, 3)} ${k.substring(3, 6)} ${k.substring(6)}"
-        } else {
-            raw!!.trim()
+        val d = digits(raw)
+        if (d.isEmpty()) return "Número oculto"
+        // "+57 300…" y "300…" son el mismo número local
+        val local = if (d.length == 12 && d.startsWith("57")) d.drop(2) else d
+        return when {
+            local.length == 10 -> "${local.substring(0, 3)} ${local.substring(3, 6)} ${local.substring(6)}"
+            local.length > 10 -> "+$local"          // internacional
+            else -> local
         }
     }
 }

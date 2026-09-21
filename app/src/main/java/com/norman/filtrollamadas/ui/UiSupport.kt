@@ -7,8 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +22,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.norman.filtrollamadas.FiltroApp
 import com.norman.filtrollamadas.data.AppContainer
+import com.norman.filtrollamadas.domain.PhoneNumbers
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -32,6 +35,21 @@ import java.util.Locale
 inline fun <reified VM : ViewModel> containerViewModel(crossinline create: (AppContainer) -> VM): VM {
     val app = LocalContext.current.applicationContext as FiltroApp
     return viewModel(factory = viewModelFactory { initializer { create(app.container) } })
+}
+
+/**
+ * Nombre del contacto para mostrar: el guardado con la llamada o, si no hay
+ * (registros antiguos, listas), el que resuelve la agenda en segundo plano.
+ */
+@Composable
+fun rememberContactName(rawNumber: String?, stored: String? = null): String? {
+    val app = LocalContext.current.applicationContext as FiltroApp
+    val key = PhoneNumbers.key(rawNumber)
+    var resolved by remember(key) { mutableStateOf<String?>(null) }
+    LaunchedEffect(key, stored) {
+        if (stored == null && key.isNotEmpty()) resolved = app.container.contacts.lookup(rawNumber)
+    }
+    return stored ?: resolved
 }
 
 // ---------- Estado de permisos y rol ----------
@@ -69,6 +87,8 @@ fun rememberSetupStatus(): SetupStatus {
     var tick by remember { mutableIntStateOf(0) }
     LifecycleResumeEffect(Unit) {
         tick++
+        // La agenda pudo cambiar mientras la app estaba en segundo plano.
+        (ctx.applicationContext as FiltroApp).container.contacts.invalidate()
         onPauseOrDispose { }
     }
     return remember(tick) { readSetupStatus(ctx) }

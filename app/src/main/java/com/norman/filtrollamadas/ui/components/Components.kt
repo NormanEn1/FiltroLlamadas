@@ -54,6 +54,7 @@ import com.norman.filtrollamadas.data.db.CallEntry
 import com.norman.filtrollamadas.domain.Decision
 import com.norman.filtrollamadas.domain.PhoneNumbers
 import com.norman.filtrollamadas.domain.Reason
+import com.norman.filtrollamadas.ui.rememberContactName
 import com.norman.filtrollamadas.ui.timeLabel
 
 /** Estructura común: barra superior grande que se contrae al desplazar. */
@@ -209,6 +210,7 @@ fun StatTile(value: String, label: String, icon: ImageVector, container: Color, 
 fun CallRow(entry: CallEntry, onClick: () -> Unit) {
     val diverted = entry.decision == Decision.DESVIADA.name
     val cs = MaterialTheme.colorScheme
+    val name = rememberContactName(entry.rawNumber, entry.contactName)
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         leadingContent = {
@@ -217,7 +219,7 @@ fun CallRow(entry: CallEntry, onClick: () -> Unit) {
         },
         headlineContent = {
             Text(
-                entry.contactName ?: PhoneNumbers.pretty(entry.rawNumber),
+                name ?: PhoneNumbers.pretty(entry.rawNumber),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -225,7 +227,7 @@ fun CallRow(entry: CallEntry, onClick: () -> Unit) {
         },
         supportingContent = {
             // Con contacto conocido, el motivo sobra: se muestra el número.
-            val detail = if (entry.contactName != null) PhoneNumbers.pretty(entry.rawNumber) else Reason.labelOf(entry.reason)
+            val detail = if (name != null) PhoneNumbers.pretty(entry.rawNumber) else Reason.labelOf(entry.reason)
             Text(
                 listOfNotNull(detail, entry.lineLabel, entry.note?.takeIf { it.isNotBlank() }).joinToString(" · "),
                 maxLines = 1,

@@ -83,6 +83,7 @@ import com.norman.filtrollamadas.ui.containerViewModel
 import com.norman.filtrollamadas.ui.dateTimeLabel
 import com.norman.filtrollamadas.ui.dayLabel
 import com.norman.filtrollamadas.ui.localDate
+import com.norman.filtrollamadas.ui.rememberContactName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -303,6 +304,7 @@ private fun CallDetailSheet(
     val diverted = entry.decision == Decision.DESVIADA.name
     val hasNumber = entry.numberKey.isNotEmpty()
     var note by rememberSaveable(entry.id) { mutableStateOf(entry.note.orEmpty()) }
+    val name = rememberContactName(entry.rawNumber, entry.contactName)
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -315,12 +317,12 @@ private fun CallDetailSheet(
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(
-                        entry.contactName ?: PhoneNumbers.pretty(entry.rawNumber),
+                        name ?: PhoneNumbers.pretty(entry.rawNumber),
                         style = MaterialTheme.typography.headlineSmall,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    if (entry.contactName != null) {
+                    if (name != null) {
                         Text(PhoneNumbers.pretty(entry.rawNumber), style = MaterialTheme.typography.bodyMedium)
                     }
                     Text(dateTimeLabel(entry.timestamp), style = MaterialTheme.typography.bodyMedium, color = cs.onSurfaceVariant)

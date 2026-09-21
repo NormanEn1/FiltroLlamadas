@@ -24,6 +24,9 @@ class AppContainer(context: Context) {
 
     val settings = SettingsRepository(appContext.dataStore)
 
+    /** Nombres de la agenda para la interfaz (con caché). */
+    val contacts = ContactNames(appContext)
+
     val engine = ScreeningEngine(appContext, settings, database.listDao(), database.callDao())
 
     suspend fun purgeOldEntries() {

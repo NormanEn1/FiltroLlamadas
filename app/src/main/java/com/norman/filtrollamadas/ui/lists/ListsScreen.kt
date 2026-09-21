@@ -82,6 +82,7 @@ import com.norman.filtrollamadas.ui.components.Pill
 import com.norman.filtrollamadas.ui.components.ScreenScaffold
 import com.norman.filtrollamadas.ui.containerViewModel
 import com.norman.filtrollamadas.ui.dayLabel
+import com.norman.filtrollamadas.ui.rememberContactName
 import com.norman.filtrollamadas.ui.localDate
 import com.norman.filtrollamadas.ui.timeLabel
 import kotlinx.coroutines.flow.SharingStarted
@@ -195,11 +196,7 @@ fun NumbersScreen() {
         ) {
             item {
                 ChoiceSegments(
-                    options = listOf(
-                        0 to "Revisar (${pending.size})",
-                        1 to "Permitidos (${white.size})",
-                        2 to "Bloqueados (${black.size})",
-                    ),
+                    options = listOf(0 to "Revisar", 1 to "Permitidos", 2 to "Bloqueados"),
                     selected = tab,
                     onSelect = { tab = it },
                 )
@@ -263,7 +260,7 @@ fun NumbersScreen() {
                                 )
                                 AssistChip(
                                     onClick = { confirmReviewAll = true },
-                                    label = { Text("Marcar todo revisado") },
+                                    label = { Text("Marcar revisados") },
                                     leadingIcon = { Icon(Icons.Rounded.DoneAll, contentDescription = null, Modifier.size(AssistChipDefaults.IconSize)) },
                                 )
                             }
@@ -291,8 +288,13 @@ fun NumbersScreen() {
                     val items = if (isWhite) white else black
                     item {
                         Text(
-                            if (isWhite) "Siempre timbran, aunque no estén en tus contactos (domicilios, médico, colegio…)."
-                            else "Siempre se desvían, aunque insistan o estén en tus contactos.",
+                            buildString {
+                                append(if (items.size == 1) "1 número · " else "${items.size} números · ")
+                                append(
+                                    if (isWhite) "siempre timbran, aunque no estén en tus contactos (domicilios, médico, colegio…)."
+                                    else "siempre se desvían, aunque insistan o estén en tus contactos."
+                                )
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = cs.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 8.dp),
@@ -313,8 +315,22 @@ fun NumbersScreen() {
                                             if (isWhite) IconBadge(Icons.Rounded.CheckCircle, cs.secondaryContainer, cs.onSecondaryContainer)
                                             else IconBadge(Icons.Rounded.Block, cs.errorContainer, cs.onErrorContainer)
                                         },
-                                        headlineContent = { Text(PhoneNumbers.pretty(e.rawNumber)) },
-                                        supportingContent = if (e.label.isNotBlank()) { { Text(e.label) } } else null,
+                                        headlineContent = {
+                                            val name = rememberContactName(e.rawNumber)
+                                            Text(
+                                                name ?: PhoneNumbers.pretty(e.rawNumber),
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        },
+                                        supportingContent = {
+                                            val name = rememberContactName(e.rawNumber)
+                                            val detail = listOfNotNull(
+                                                if (name != null) PhoneNumbers.pretty(e.rawNumber) else null,
+                                                e.label.takeIf { it.isNotBlank() },
+                                            ).joinToString(" · ")
+                                            if (detail.isNotEmpty()) Text(detail, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        },
                                         trailingContent = {
                                             IconButton(onClick = { vm.remove(e) }) {
                                                 Icon(Icons.Rounded.Delete, contentDescription = "Quitar")
@@ -400,8 +416,9 @@ private fun PendingRow(p: PendingNumber, onAllow: () -> Unit, onBlock: () -> Uni
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
+                val name = rememberContactName(p.rawNumber)
                 Text(
-                    PhoneNumbers.pretty(p.rawNumber),
+                    name ?: PhoneNumbers.pretty(p.rawNumber),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,

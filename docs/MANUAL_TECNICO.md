@@ -103,6 +103,9 @@ de los diálogos de permisos o del selector de rol.
 contacto (sin costo extra) y viaja en `Verdict.contactName` hasta `CallEntry.contactName` (BD v2). La interfaz
 muestra el nombre como título y el número como subtítulo; el CSV incluye la columna `contacto`.
 
+En la interfaz, `rememberContactName(raw, stored)` usa el nombre guardado y, si no hay (registros anteriores a la
+v2 o entradas de listas), lo resuelve con `ContactNames` (caché en memoria, invalidada al volver a la app).
+
 ### 5.6 Notificación resumen
 `Notifier.diverted` usa un id fijo (`1001`), `setNumber(total del día)` y `setOnlyAlertOnce(true)`: la primera
 llamada del día suena, las siguientes actualizan el texto en silencio.
