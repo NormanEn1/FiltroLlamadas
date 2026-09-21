@@ -15,6 +15,8 @@ data class CallEntry(
     val reason: String,          // Reason.name
     val lineLabel: String?,
     val note: String? = null,
+    /** Nombre del contacto en el momento de la llamada, si estaba en la agenda. */
+    val contactName: String? = null,
 )
 
 /** Resultado agregado para la bandeja "Por revisar". */

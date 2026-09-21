@@ -3,6 +3,7 @@ package com.norman.filtrollamadas.data
 import android.content.Context
 import androidx.room.Room
 import com.norman.filtrollamadas.data.db.AppDatabase
+import com.norman.filtrollamadas.data.db.MIGRATION_1_2
 import com.norman.filtrollamadas.data.settings.SettingsRepository
 import com.norman.filtrollamadas.data.settings.dataStore
 import com.norman.filtrollamadas.domain.ScreeningEngine
@@ -17,7 +18,9 @@ class AppContainer(context: Context) {
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     val database: AppDatabase =
-        Room.databaseBuilder(appContext, AppDatabase::class.java, "filtro.db").build()
+        Room.databaseBuilder(appContext, AppDatabase::class.java, "filtro.db")
+            .addMigrations(MIGRATION_1_2)
+            .build()
 
     val settings = SettingsRepository(appContext.dataStore)
 

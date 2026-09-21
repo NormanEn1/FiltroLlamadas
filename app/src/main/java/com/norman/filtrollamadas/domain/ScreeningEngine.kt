@@ -42,7 +42,7 @@ class ScreeningEngine(
         val key = PhoneNumbers.key(digits)
         val listed = lists.find(key)
         if (listed?.type == ListType.NEGRA.name) return divert(Reason.LISTA_NEGRA)
-        if (isContact(rawNumber.orEmpty())) return allow(Reason.CONTACTO)
+        contactName(rawNumber.orEmpty())?.let { name -> return Verdict(Decision.PERMITIDA, Reason.CONTACTO, name) }
         if (listed?.type == ListType.BLANCA.name) return allow(Reason.LISTA_BLANCA)
         if (s.recentDays > 0 && calledRecently(key, s.recentDays)) return allow(Reason.LLAMADA_RECIENTE)
         if (s.allowRepeat) {
@@ -64,15 +64,20 @@ class ScreeningEngine(
         digits in setOf("123", "112", "911")
     }
 
-    private fun isContact(number: String): Boolean {
-        if (!granted(Manifest.permission.READ_CONTACTS)) return false
+    /** Nombre en la agenda, o null si no es contacto (o falta el permiso). */
+    private fun contactName(number: String): String? {
+        if (number.isBlank() || !granted(Manifest.permission.READ_CONTACTS)) return null
         val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
         return try {
-            context.contentResolver
-                .query(uri, arrayOf(ContactsContract.PhoneLookup._ID), null, null, null)
-                ?.use { it.count > 0 } ?: false
+            context.contentResolver.query(
+                uri,
+                arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME),
+                null, null, null,
+            )?.use { c ->
+                if (c.moveToFirst()) c.getString(0)?.takeIf { it.isNotBlank() } ?: "Contacto" else null
+            }
         } catch (e: Exception) {
-            false
+            null
         }
     }
 

@@ -25,7 +25,7 @@ enum class Reason(val label: String) {
     }
 }
 
-data class Verdict(val decision: Decision, val reason: Reason)
+data class Verdict(val decision: Decision, val reason: Reason, val contactName: String? = null)
 
 /**
  * BLANCA: siempre timbra · NEGRA: siempre se desvía (ni "insiste" lo deja pasar)

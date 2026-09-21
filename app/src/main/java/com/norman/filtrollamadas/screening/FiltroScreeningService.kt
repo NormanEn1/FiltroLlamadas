@@ -71,12 +71,19 @@ class FiltroScreeningService : CallScreeningService() {
                     decision = verdict.decision.name,
                     reason = verdict.reason.name,
                     lineLabel = Telefonia.lineLabel(this, account),
+                    contactName = verdict.contactName,
                 )
             )
             if (verdict.decision == Decision.DESVIADA && s.notifyOnDivert) {
                 val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
                 val today = container.database.callDao().countDecisionSince(Decision.DESVIADA.name, startOfDay)
-                Notifier.diverted(this, today, PhoneNumbers.pretty(number), verdict.reason.label, s.destinationLabel)
+                Notifier.diverted(
+                    this,
+                    today,
+                    verdict.contactName ?: PhoneNumbers.pretty(number),
+                    verdict.reason.label,
+                    s.destinationLabel,
+                )
             }
         }
     }

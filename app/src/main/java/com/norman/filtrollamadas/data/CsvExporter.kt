@@ -13,12 +13,13 @@ object CsvExporter {
     fun write(out: OutputStream, entries: List<CallEntry>) {
         out.bufferedWriter(Charsets.UTF_8).use { w ->
             w.write(0xFEFF) // BOM para que Excel abra bien los acentos
-            w.write("fecha,numero,decision,motivo,linea,nota\n")
+            w.write("fecha,numero,contacto,decision,motivo,linea,nota\n")
             entries.forEach { e ->
                 val date = Instant.ofEpochMilli(e.timestamp).atZone(ZoneId.systemDefault()).format(fmt)
                 val row = listOf(
                     date,
                     e.rawNumber ?: "Oculto",
+                    e.contactName.orEmpty(),
                     e.decision,
                     Reason.labelOf(e.reason),
                     e.lineLabel.orEmpty(),

@@ -1,6 +1,18 @@
 package com.norman.filtrollamadas.ui.lists
 
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,9 +30,9 @@ import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DoneAll
-import androidx.compose.material.icons.rounded.Label
+import androidx.compose.material.icons.automirrored.rounded.Label
 import androidx.compose.material.icons.rounded.Phone
-import androidx.compose.material.icons.rounded.PhoneForwarded
+import androidx.compose.material.icons.automirrored.rounded.PhoneForwarded
 import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.AlertDialog
@@ -363,39 +375,73 @@ private fun GroupCard(content: @Composable () -> Unit) {
     }
 }
 
+/**
+ * Dos líneas: datos arriba y acciones abajo, para que nunca se salga del marco
+ * aunque el número sea largo o la pantalla angosta.
+ */
 @Composable
 private fun PendingRow(p: PendingNumber, onAllow: () -> Unit, onBlock: () -> Unit, onRestore: (() -> Unit)? = null) {
     val cs = MaterialTheme.colorScheme
     val insistent = p.attempts >= INSISTENT_ATTEMPTS
-    ListItem(
-        leadingContent = { IconBadge(Icons.Rounded.PhoneForwarded, cs.errorContainer, cs.onErrorContainer) },
-        headlineContent = {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(PhoneNumbers.pretty(p.rawNumber), fontWeight = FontWeight.SemiBold)
-                if (insistent) Pill("Insistente", cs.errorContainer, cs.onErrorContainer)
-            }
-        },
-        supportingContent = {
-            val n = if (p.attempts == 1) "1 intento" else "${p.attempts} intentos"
-            Text("$n · último ${dayLabel(localDate(p.lastAt)).lowercase()} ${timeLabel(p.lastAt)}")
-        },
-        trailingContent = {
-            Row {
-                if (onRestore != null) {
-                    IconButton(onClick = onRestore) {
-                        Icon(Icons.Rounded.Replay, contentDescription = "Volver a pendientes")
-                    }
-                }
-                IconButton(onClick = onAllow) {
-                    Icon(Icons.Rounded.CheckCircle, contentDescription = "Permitir", tint = cs.secondary)
-                }
-                IconButton(onClick = onBlock) {
-                    Icon(Icons.Rounded.Block, contentDescription = "Bloquear", tint = cs.error)
+    val badgeBg = if (insistent) cs.errorContainer else cs.surfaceContainerHighest
+    val badgeFg = if (insistent) cs.onErrorContainer else cs.onSurfaceVariant
+
+    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier.size(44.dp).clip(CircleShape).background(badgeBg),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (p.attempts > 1) {
+                    Text("${p.attempts}×", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = badgeFg)
+                } else {
+                    Icon(Icons.AutoMirrored.Rounded.PhoneForwarded, contentDescription = null, tint = badgeFg, modifier = Modifier.size(22.dp))
                 }
             }
-        },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-    )
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    PhoneNumbers.pretty(p.rawNumber),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    buildString {
+                        append(if (p.attempts == 1) "1 intento" else "${p.attempts} intentos")
+                        if (insistent) append(" · Insistente")
+                        append(" · ${dayLabel(localDate(p.lastAt)).lowercase()} ${timeLabel(p.lastAt)}")
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (insistent) cs.error else cs.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            val pad = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+            if (onRestore != null) {
+                OutlinedButton(onClick = onRestore, contentPadding = pad, modifier = Modifier.weight(1f)) {
+                    Text("Pendiente", maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelLarge)
+                }
+            }
+            FilledTonalButton(onClick = onAllow, contentPadding = pad, modifier = Modifier.weight(1f)) {
+                Text("Permitir", maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelLarge)
+            }
+            FilledTonalButton(
+                onClick = onBlock,
+                contentPadding = pad,
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.filledTonalButtonColors(containerColor = cs.errorContainer, contentColor = cs.onErrorContainer),
+            ) {
+                Text("Bloquear", maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelLarge)
+            }
+        }
+        HorizontalDivider(Modifier.padding(top = 12.dp), color = cs.outlineVariant.copy(alpha = 0.5f))
+    }
 }
 
 @Composable
@@ -425,7 +471,7 @@ private fun AddNumberDialog(type: ListType, onDismiss: () -> Unit, onConfirm: (S
                     value = label,
                     onValueChange = { label = it },
                     label = { Text("Descripción (opcional)") },
-                    leadingIcon = { Icon(Icons.Rounded.Label, contentDescription = null) },
+                    leadingIcon = { Icon(Icons.AutoMirrored.Rounded.Label, contentDescription = null) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )

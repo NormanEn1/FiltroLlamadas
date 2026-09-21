@@ -36,7 +36,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.History
-import androidx.compose.material.icons.rounded.Label
+import androidx.compose.material.icons.automirrored.rounded.Label
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Palette
@@ -279,7 +279,7 @@ private fun DestinationSection(s: AppSettings, onSave: (String, String, Boolean)
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Nombre del destino") },
                 placeholder = { Text("iPhone") },
-                leadingIcon = { Icon(Icons.Rounded.Label, contentDescription = null) },
+                leadingIcon = { Icon(Icons.AutoMirrored.Rounded.Label, contentDescription = null) },
                 singleLine = true,
             )
         }

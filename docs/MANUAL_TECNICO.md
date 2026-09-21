@@ -98,11 +98,16 @@ de los diálogos de permisos o del selector de rol.
   corrutina, restaurar como `REVISADO` los que venían de Revisados. *Volver a pendientes* = `deleteAll([key])`.
 - Umbral de "insistente": constante `INSISTENT_ATTEMPTS = 3` en `NumbersScreen`.
 
-### 5.5 Notificación resumen
+### 5.5 Nombre del contacto
+`ScreeningEngine.contactName()` resuelve `PhoneLookup.DISPLAY_NAME` en la misma consulta con la que decide si es
+contacto (sin costo extra) y viaja en `Verdict.contactName` hasta `CallEntry.contactName` (BD v2). La interfaz
+muestra el nombre como título y el número como subtítulo; el CSV incluye la columna `contacto`.
+
+### 5.6 Notificación resumen
 `Notifier.diverted` usa un id fijo (`1001`), `setNumber(total del día)` y `setOnlyAlertOnce(true)`: la primera
 llamada del día suena, las siguientes actualizan el texto en silencio.
 
-### 5.6 Garantía sin red
+### 5.7 Garantía sin red
 ```xml
 <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
@@ -118,7 +123,7 @@ aapt2 dump permissions app/build/outputs/apk/debug/app-debug.apk   # no debe lis
 |---|---|
 | Nueva regla | Añadir valor a `Reason` (Model.kt) y evaluarla en `ScreeningEngine.evaluate` en el orden correcto |
 | Nuevo ajuste | Campo en `AppSettings` + clave en `SettingsRepository.K` + `read`/`write` + control en `SettingsScreen` |
-| Cambiar esquema de BD | Incrementar `version` en `AppDatabase` y añadir `Migration` (hoy no hay migraciones: v1) |
+| Cambiar esquema de BD | Incrementar `version` en `AppDatabase` y añadir `Migration` (v2 = `MIGRATION_1_2`, columna `contactName`) |
 | Otro código de desvío (p. ej. `**62*`) | `Telefonia` + acción en `ForwardAction` (HomeScreen) |
 | Cambiar el umbral de "insistente" | `INSISTENT_ATTEMPTS` en `ui/lists/ListsScreen.kt` (candidato a ajuste configurable) |
 | Nuevo tipo de lista | Valor en `ListType`; si debe influir en la decisión, evaluarlo en `ScreeningEngine` |

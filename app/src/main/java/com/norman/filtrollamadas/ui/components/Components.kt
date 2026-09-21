@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.PhoneForwarded
+import androidx.compose.material.icons.automirrored.rounded.PhoneForwarded
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -212,13 +212,22 @@ fun CallRow(entry: CallEntry, onClick: () -> Unit) {
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         leadingContent = {
-            if (diverted) IconBadge(Icons.Rounded.PhoneForwarded, cs.errorContainer, cs.onErrorContainer)
+            if (diverted) IconBadge(Icons.AutoMirrored.Rounded.PhoneForwarded, cs.errorContainer, cs.onErrorContainer)
             else IconBadge(Icons.Rounded.Call, cs.secondaryContainer, cs.onSecondaryContainer)
         },
-        headlineContent = { Text(PhoneNumbers.pretty(entry.rawNumber), fontWeight = FontWeight.SemiBold) },
-        supportingContent = {
+        headlineContent = {
             Text(
-                listOfNotNull(Reason.labelOf(entry.reason), entry.lineLabel, entry.note?.takeIf { it.isNotBlank() }).joinToString(" · "),
+                entry.contactName ?: PhoneNumbers.pretty(entry.rawNumber),
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        supportingContent = {
+            // Con contacto conocido, el motivo sobra: se muestra el número.
+            val detail = if (entry.contactName != null) PhoneNumbers.pretty(entry.rawNumber) else Reason.labelOf(entry.reason)
+            Text(
+                listOfNotNull(detail, entry.lineLabel, entry.note?.takeIf { it.isNotBlank() }).joinToString(" · "),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

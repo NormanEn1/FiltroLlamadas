@@ -32,7 +32,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.History
-import androidx.compose.material.icons.rounded.PhoneForwarded
+import androidx.compose.material.icons.automirrored.rounded.PhoneForwarded
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -60,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -309,11 +310,19 @@ private fun CallDetailSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (diverted) IconBadge(Icons.Rounded.PhoneForwarded, cs.errorContainer, cs.onErrorContainer, 56.dp)
+                if (diverted) IconBadge(Icons.AutoMirrored.Rounded.PhoneForwarded, cs.errorContainer, cs.onErrorContainer, 56.dp)
                 else IconBadge(Icons.Rounded.Call, cs.secondaryContainer, cs.onSecondaryContainer, 56.dp)
                 Spacer(Modifier.width(16.dp))
                 Column {
-                    Text(PhoneNumbers.pretty(entry.rawNumber), style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        entry.contactName ?: PhoneNumbers.pretty(entry.rawNumber),
+                        style = MaterialTheme.typography.headlineSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    if (entry.contactName != null) {
+                        Text(PhoneNumbers.pretty(entry.rawNumber), style = MaterialTheme.typography.bodyMedium)
+                    }
                     Text(dateTimeLabel(entry.timestamp), style = MaterialTheme.typography.bodyMedium, color = cs.onSurfaceVariant)
                 }
             }

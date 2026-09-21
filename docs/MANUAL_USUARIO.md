@@ -86,7 +86,8 @@ En **Inicio**, activa el interruptor **Protección activa**. ¡Listo! Ya puedes 
 > *Marcar todo revisado* solo limpia la bandeja: los números pasan a **Revisados**, siguen tratándose como
 > desconocidos y **vuelven solos a Pendientes si llaman otra vez**.
 
-**Registro** — todas las llamadas revisadas, agrupadas por día.
+**Registro** — todas las llamadas revisadas, agrupadas por día. Si el número está en tu agenda se muestra el
+**nombre del contacto** y debajo el número.
 - Busca por número, motivo o nota. Filtra *Todas / Desviadas / Permitidas*.
 - Toca una llamada para: añadir **nota**, **llamar**, **copiar**, **permitir**, **bloquear**, **eliminar**.
 - ⬇️ exporta todo a CSV (se abre en Excel). 🧹 borra el registro.

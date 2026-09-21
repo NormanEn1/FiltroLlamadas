@@ -19,6 +19,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Notificación resumen única con el total del día (suena solo la primera vez).
 - Ajustes persistentes (DataStore), retención configurable del registro.
 - Interfaz Material 3 con tema claro/oscuro y colores dinámicos.
+- Muestra el **nombre del contacto** (agenda del teléfono) en Registro, en el detalle, en la notificación y en el
+  CSV, en lugar del motivo "En contactos".
 - Sin permiso `INTERNET` (eliminado explícitamente del manifiesto).
 - Sección **Acerca de** en Ajustes: Filtro · Neom · versión 1.0.0 (2026), compilación, qué hace, privacidad,
   licencia MIT, requisitos, tecnologías, paquete y enlaces al repositorio y a los issues.

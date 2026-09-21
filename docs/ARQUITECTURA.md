@@ -102,6 +102,8 @@ Notas:
 - **Permitido** se evalúa después de *bloqueado*: si un número estuviera en ambas (no ocurre, la clave es única), gana el bloqueo.
 - Un número marcado **REVISADO** sigue el camino normal de un desconocido.
 - En la interfaz, `LISTA_BLANCA`/`LISTA_NEGRA` se muestran como *Número permitido* / *Número bloqueado*.
+- Si el número está en la agenda, el motor guarda el **nombre del contacto** (`Verdict.contactName`) y la
+  interfaz lo muestra en lugar del número y del motivo.
 
 Comparación de números: se normaliza a **dígitos** y se usan los **últimos 10** (`PhoneNumbers.key`), así
 `+57 300 123 4567`, `573001234567` y `300-123-4567` son el mismo número. Para contactos se usa
@@ -134,6 +136,7 @@ erDiagram
         string reason "Reason.name"
         string lineLabel "SIM"
         string note
+        string contactName "nombre en la agenda (v2)"
     }
     LISTAS {
         string numberKey PK

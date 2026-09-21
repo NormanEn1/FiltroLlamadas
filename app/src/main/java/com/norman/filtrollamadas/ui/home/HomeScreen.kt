@@ -30,7 +30,7 @@ import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Inbox
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Notifications
-import androidx.compose.material.icons.rounded.PhoneForwarded
+import androidx.compose.material.icons.automirrored.rounded.PhoneForwarded
 import androidx.compose.material.icons.rounded.PhoneIphone
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.SimCard
@@ -452,7 +452,7 @@ private fun ConfirmForwardDialog(action: ForwardAction, s: AppSettings, onDismis
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Rounded.PhoneForwarded, contentDescription = null) },
+        icon = { Icon(Icons.AutoMirrored.Rounded.PhoneForwarded, contentDescription = null) },
         title = { Text(title) },
         text = {
             Column {
