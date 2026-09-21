@@ -165,7 +165,13 @@ para validar reglas, registro y notificaciones. El desvío del operador no aplic
    ```bash
    keytool -genkeypair -v -keystore filtro-release.jks -alias filtro -keyalg RSA -keysize 4096 -validity 10000
    ```
-3. Android Studio → *Build → Generate Signed App Bundle / APK* → APK → release.
+3. Copiar `keystore.properties.ejemplo` a `keystore.properties` (ya está en `.gitignore`) con la ruta del
+   `.jks`, el alias y las contraseñas. Luego:
+   ```bash
+   ./gradlew assembleRelease
+   ```
+   Sin ese archivo, `assembleRelease` genera un APK **sin firmar** (Android no lo instala).
+   Alternativa gráfica: *Build → Generate Signed App Bundle / APK → APK → release*.
 4. Crear un *Release* en GitHub con la etiqueta `vX.Y.Z` y adjuntar el APK firmado y su SHA-256:
    ```bash
    sha256sum app-release.apk
