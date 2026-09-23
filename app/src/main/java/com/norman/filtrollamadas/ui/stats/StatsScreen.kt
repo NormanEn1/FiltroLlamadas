@@ -37,7 +37,9 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -65,6 +67,10 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 enum class StatsRange(val days: Int, val label: String) {
@@ -313,23 +319,59 @@ private fun TrendCard(ui: StatsUi) {
     }
 }
 
-/** Barras apiladas por día: desviadas abajo, permitidas arriba. */
+/**
+ * Barras apiladas por día (desviadas abajo, permitidas arriba) con escala
+ * vertical: líneas de referencia y su valor a la izquierda.
+ */
 @Composable
 private fun DailyBarChart(days: List<DayPoint>, divertedColor: Color, allowedColor: Color) {
+    val cs = MaterialTheme.colorScheme
+    val measurer = rememberTextMeasurer()
+    val labelStyle = MaterialTheme.typography.labelSmall.copy(color = cs.onSurfaceVariant)
+    val gridColor = cs.outlineVariant.copy(alpha = 0.6f)
+
     val max = (days.maxOfOrNull { it.diverted + it.allowed } ?: 0).coerceAtLeast(1)
-    Canvas(Modifier.fillMaxWidth().height(170.dp)) {
+    val step = niceStep(max)
+    val top = ((max + step - 1) / step) * step          // techo redondeado de la escala
+    val ticks = (0..top step step).toList()
+
+    Canvas(Modifier.fillMaxWidth().height(180.dp)) {
+        // Ancho reservado para las etiquetas del eje
+        val labels = ticks.map { measurer.measure(it.toString(), labelStyle) }
+        val gutter = (labels.maxOf { it.size.width }).toFloat() + 8f.dp.toPx()
+        val chartLeft = gutter
+        val chartWidth = size.width - chartLeft
+        val chartHeight = size.height - labels.first().size.height / 2f  // espacio para la etiqueta superior
+        val topPad = labels.first().size.height / 2f
+
+        ticks.forEachIndexed { i, value ->
+            val y = topPad + chartHeight - chartHeight * (value.toFloat() / top)
+            drawLine(
+                color = gridColor,
+                start = Offset(chartLeft, y),
+                end = Offset(size.width, y),
+                strokeWidth = 1f.dp.toPx(),
+            )
+            val layout = labels[i]
+            drawText(
+                textLayoutResult = layout,
+                topLeft = Offset(gutter - 8f.dp.toPx() - layout.size.width, y - layout.size.height / 2f),
+            )
+        }
+
         val n = days.size.coerceAtLeast(1)
-        val slot = size.width / n
+        val slot = chartWidth / n
         val barW = (slot * 0.62f).coerceAtMost(22f.dp.toPx())
         val radius = CornerRadius(barW / 3, barW / 3)
         days.forEachIndexed { i, p ->
-            val x = i * slot + (slot - barW) / 2
-            val hDiv = size.height * (p.diverted.toFloat() / max)
-            val hAll = size.height * (p.allowed.toFloat() / max)
+            val x = chartLeft + i * slot + (slot - barW) / 2
+            val hDiv = chartHeight * (p.diverted.toFloat() / top)
+            val hAll = chartHeight * (p.allowed.toFloat() / top)
+            val base = topPad + chartHeight
             if (hAll > 0f) {
                 drawRoundRect(
                     color = allowedColor,
-                    topLeft = Offset(x, size.height - hDiv - hAll),
+                    topLeft = Offset(x, base - hDiv - hAll),
                     size = Size(barW, hAll),
                     cornerRadius = radius,
                 )
@@ -337,13 +379,20 @@ private fun DailyBarChart(days: List<DayPoint>, divertedColor: Color, allowedCol
             if (hDiv > 0f) {
                 drawRoundRect(
                     color = divertedColor,
-                    topLeft = Offset(x, size.height - hDiv),
+                    topLeft = Offset(x, base - hDiv),
                     size = Size(barW, hDiv),
                     cornerRadius = radius,
                 )
             }
         }
     }
+}
+
+/** Paso "redondo" (1, 2, 5, 10, 20…) para tener entre 3 y 5 líneas de referencia. */
+private fun niceStep(max: Int): Int {
+    val raw = ceil(max / 4.0).toInt().coerceAtLeast(1)
+    val magnitude = 10.0.pow(floor(log10(raw.toDouble()))).toInt().coerceAtLeast(1)
+    return listOf(1, 2, 5, 10).map { it * magnitude }.first { it >= raw }
 }
 
 /** 24 barras: volumen de desvíos por hora del día. */
