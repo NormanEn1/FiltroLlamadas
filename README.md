@@ -44,6 +44,7 @@ flowchart LR
 | **Permitidos / Bloqueados** | Siempre timbran / siempre se desvían (ni insistiendo pasan) |
 | **Redirección** | Activar / verificar / desactivar el desvío del operador desde la app, por la SIM elegida |
 | **Registro** | Historial por día, búsqueda, filtros, notas, permitir/bloquear desde el detalle, exportar CSV |
+| **Estadísticas** | Evolución a 7/30/90 días con comparación contra el período anterior, barras por día, motivos, franja horaria y top de insistentes |
 | **Doble SIM** | Proteger todas las líneas o solo una |
 | **Notificaciones** | Un solo aviso con el total de desviadas del día (suena solo la primera vez) |
 | **Diseño** | Material 3, tema claro/oscuro, colores dinámicos |

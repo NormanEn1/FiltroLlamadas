@@ -143,7 +143,13 @@ class HomeViewModel(private val c: AppContainer) : ViewModel() {
 }
 
 @Composable
-fun HomeScreen(pendingCount: Int, onOpenNumbers: () -> Unit, onOpenLog: () -> Unit, onOpenSettings: () -> Unit) {
+fun HomeScreen(
+    pendingCount: Int,
+    onOpenNumbers: () -> Unit,
+    onOpenStats: () -> Unit,
+    onOpenLog: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
     val vm = containerViewModel { HomeViewModel(it) }
     val ui by vm.ui.collectAsStateWithLifecycle()
     val s = ui.settings
@@ -198,11 +204,22 @@ fun HomeScreen(pendingCount: Int, onOpenNumbers: () -> Unit, onOpenLog: () -> Un
             }
             item { ForwardingCard(s, onAction = { pending = it }, onConfigure = onOpenSettings) }
             item {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    val cs = MaterialTheme.colorScheme
-                    StatTile(ui.divertedToday.toString(), "Desviadas hoy", Icons.Rounded.Block, cs.errorContainer, cs.onErrorContainer, Modifier.weight(1f))
-                    StatTile(ui.divertedWeek.toString(), "Desviadas 7 días", Icons.Rounded.DateRange, cs.primaryContainer, cs.onPrimaryContainer, Modifier.weight(1f))
-                    StatTile(ui.allowedToday.toString(), "Permitidas hoy", Icons.Rounded.Call, cs.secondaryContainer, cs.onSecondaryContainer, Modifier.weight(1f))
+                Column {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            "Resumen",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.weight(1f).padding(start = 8.dp),
+                        )
+                        TextButton(onClick = onOpenStats) { Text("Estadísticas") }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        val cs = MaterialTheme.colorScheme
+                        StatTile(ui.divertedToday.toString(), "Desviadas hoy", Icons.Rounded.Block, cs.errorContainer, cs.onErrorContainer, Modifier.weight(1f))
+                        StatTile(ui.divertedWeek.toString(), "Desviadas 7 días", Icons.Rounded.DateRange, cs.primaryContainer, cs.onPrimaryContainer, Modifier.weight(1f))
+                        StatTile(ui.allowedToday.toString(), "Permitidas hoy", Icons.Rounded.Call, cs.secondaryContainer, cs.onSecondaryContainer, Modifier.weight(1f))
+                    }
                 }
             }
             item {

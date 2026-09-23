@@ -17,6 +17,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
   Contador en la barra inferior y aviso en Inicio.
 - Listas Permitidos (blanca) y Bloqueados (negra).
 - Notificación resumen única con el total del día (suena solo la primera vez).
+- Pantalla **Estadísticas** (desde Inicio → "Estadísticas"): períodos de 7/30/90 días, comparación con el período
+  anterior (¿bajó el spam?), barras apiladas por día, motivos del desvío, franja horaria y los 5 números que más
+  insisten. Gráficas dibujadas con Compose Canvas, sin librerías externas.
 - Ajustes persistentes (DataStore), retención configurable del registro.
 - Interfaz Material 3 con tema claro/oscuro y colores dinámicos.
 - Muestra el **nombre del contacto** (agenda del teléfono) en Registro, en el detalle, en las listas, en la

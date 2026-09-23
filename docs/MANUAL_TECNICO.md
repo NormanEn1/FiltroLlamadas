@@ -62,6 +62,7 @@ app/src/main/
       ├─ home/HomeScreen.kt        Inicio (estado, pendientes, redirección, estadísticas)
       ├─ lists/ListsScreen.kt      NumbersScreen: bandeja Revisar + Permitidos + Bloqueados
       ├─ log/LogScreen.kt          Registro cronológico, detalle, exportar
+      ├─ stats/StatsScreen.kt      Estadísticas: agregados en el ViewModel y gráficas en Canvas
       └─ settings/SettingsScreen.kt
          (cada archivo contiene su pantalla y su ViewModel)
 ```
@@ -106,11 +107,17 @@ muestra el nombre como título y el número como subtítulo; el CSV incluye la c
 En la interfaz, `rememberContactName(raw, stored)` usa el nombre guardado y, si no hay (registros anteriores a la
 v2 o entradas de listas), lo resuelve con `ContactNames` (caché en memoria, invalidada al volver a la app).
 
-### 5.6 Notificación resumen
+### 5.6 Estadísticas
+`StatsViewModel` combina `observeAll()` con el período elegido y calcula en memoria: serie diaria (relleno de días
+sin llamadas), totales, comparación con el período anterior de igual duración, motivos, histograma por hora y top
+de números. Las gráficas son `Canvas` de Compose (`drawRoundRect`), sin dependencias externas. La pantalla está
+fuera de la barra inferior: se abre desde Inicio y vuelve con la flecha (`ScreenScaffold(onBack = …)`).
+
+### 5.7 Notificación resumen
 `Notifier.diverted` usa un id fijo (`1001`), `setNumber(total del día)` y `setOnlyAlertOnce(true)`: la primera
 llamada del día suena, las siguientes actualizan el texto en silencio.
 
-### 5.7 Garantía sin red
+### 5.8 Garantía sin red
 ```xml
 <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />

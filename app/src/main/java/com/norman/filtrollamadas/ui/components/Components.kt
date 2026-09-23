@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.PhoneForwarded
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,6 +65,7 @@ import com.norman.filtrollamadas.ui.timeLabel
 fun ScreenScaffold(
     title: String,
     snackbarHostState: SnackbarHostState? = null,
+    onBack: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
@@ -74,6 +77,13 @@ fun ScreenScaffold(
         topBar = {
             LargeTopAppBar(
                 title = { Text(title, fontWeight = FontWeight.SemiBold) },
+                navigationIcon = {
+                    if (onBack != null) {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Volver")
+                        }
+                    }
+                },
                 actions = actions,
                 scrollBehavior = behavior,
             )

@@ -86,6 +86,18 @@ En **Inicio**, activa el interruptor **Protección activa**. ¡Listo! Ya puedes 
 > *Marcar todo revisado* solo limpia la bandeja: los números pasan a **Revisados**, siguen tratándose como
 > desconocidos y **vuelven solos a Pendientes si llaman otra vez**.
 
+**Estadísticas** (Inicio → *Estadísticas*) — para responder "¿está bajando el spam?":
+
+| Bloque | Qué muestra |
+|---|---|
+| Período | 7, 30 o 90 días |
+| Tendencia | *"Bajaron 37%"* comparando con el período anterior de igual duración |
+| Totales | Desviadas, permitidas y promedio de desviadas al día |
+| Llamadas por día | Barras apiladas: desviadas (rojo) sobre permitidas (verde) |
+| Motivos del desvío | Cuántas por oculto, desconocido o bloqueado, con porcentaje |
+| A qué hora llaman | Volumen por hora del día (útil para el modo No molestar) |
+| Los que más insisten | Los 5 números con más intentos |
+
 **Registro** — todas las llamadas revisadas, agrupadas por día. Si el número está en tu agenda se muestra el
 **nombre del contacto** y debajo el número.
 - Busca por número, motivo o nota. Filtra *Todas / Desviadas / Permitidas*.

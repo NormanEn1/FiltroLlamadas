@@ -120,7 +120,7 @@ Comparación de números: se normaliza a **dígitos** y se usan los **últimos 1
 | Datos | `AppDatabase` (Room) | Tablas `llamadas` (registro) y `listas` (permitidos, bloqueados, revisados); consulta agregada para la bandeja. |
 | Datos | `AppContainer` | Inyección manual de dependencias + `appScope` (IO). |
 | Telefonía | `Telefonia` | Enumerar SIMs (`PhoneAccountHandle`) y marcar códigos MMI con `TelecomManager.placeCall`. |
-| Presentación | `ui/*` (Compose M3) | 4 pantallas (Inicio, Números, Registro, Ajustes) con ViewModel + `StateFlow`; navegación inferior con contador de pendientes. |
+| Presentación | `ui/*` (Compose M3) | 5 pantallas (Inicio, Números, Registro, Ajustes y Estadísticas, esta última fuera de la barra inferior) con ViewModel + `StateFlow`; navegación inferior con contador de pendientes. |
 | Soporte | `Notifier`, `CsvExporter` | Notificación resumen del día; exportación CSV (UTF-8 BOM). |
 
 ## 6. Modelo de datos

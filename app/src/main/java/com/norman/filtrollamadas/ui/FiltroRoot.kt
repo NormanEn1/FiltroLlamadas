@@ -32,6 +32,7 @@ import com.norman.filtrollamadas.ui.home.HomeScreen
 import com.norman.filtrollamadas.ui.lists.NumbersScreen
 import com.norman.filtrollamadas.ui.log.LogScreen
 import com.norman.filtrollamadas.ui.settings.SettingsScreen
+import com.norman.filtrollamadas.ui.stats.StatsScreen
 
 private enum class Tab(val route: String, val label: String, val icon: ImageVector) {
     INICIO("inicio", "Inicio", Icons.Rounded.Shield),
@@ -39,6 +40,8 @@ private enum class Tab(val route: String, val label: String, val icon: ImageVect
     REGISTRO("registro", "Registro", Icons.Rounded.History),
     AJUSTES("ajustes", "Ajustes", Icons.Rounded.Tune),
 }
+
+private const val ROUTE_STATS = "estadisticas"
 
 @Composable
 fun FiltroRoot() {
@@ -90,6 +93,7 @@ fun FiltroRoot() {
                 HomeScreen(
                     pendingCount = pending,
                     onOpenNumbers = { go(Tab.NUMEROS.route) },
+                    onOpenStats = { nav.navigate(ROUTE_STATS) },
                     onOpenLog = { go(Tab.REGISTRO.route) },
                     onOpenSettings = { go(Tab.AJUSTES.route) },
                 )
@@ -97,6 +101,7 @@ fun FiltroRoot() {
             composable(Tab.NUMEROS.route) { NumbersScreen() }
             composable(Tab.REGISTRO.route) { LogScreen() }
             composable(Tab.AJUSTES.route) { SettingsScreen() }
+            composable(ROUTE_STATS) { StatsScreen(onBack = { nav.popBackStack() }) }
         }
     }
 }
